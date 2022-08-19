@@ -11,7 +11,7 @@ return [
     ],
 
     // 埋点相关配置
-    'bury_point' => [
+    'bury' => [
         'url' => 'shenche', // 上报地址
         'index' => 'report:hs-service', // 对应的es索引
         'interval' => 300, // 间隔多少秒上报一次

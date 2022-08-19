@@ -4,6 +4,8 @@ namespace ReportAgent;
 
 
 use Hyperf\Contract\ConfigInterface;
+use Hyperf\HttpServer\Contract\RequestInterface;
+use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use ReportAgent\Entity\MessageEntity;
 
@@ -32,7 +34,7 @@ class MessageFactory
     public function __construct(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class);
-        $this->config = $config->get('report.php');
+        $this->config = $config->get('report');
         $this->appId = $this->config['app_id'];
     }
 
@@ -52,7 +54,7 @@ class MessageFactory
             $options,
             [
                 'app_id' => $this->appId,
-                'type' => $type,
+                'message_type' => $type,
                 'message_id' => $this->messageId(),
                 'client_ip' => $this->clientIp(),
                 'created_at' => date('Y-m-d H:i:s', time()),
@@ -73,11 +75,22 @@ class MessageFactory
     /**
      * 获取客户端IP
      *
-     * @return mixed
+     * @return mixed|string
      * @author xiaowei@yuanxinjituan.com
      */
     public function clientIp()
     {
-        return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        $request = ApplicationContext::getContainer()->get(RequestInterface::class);
+        $headers = $request->getHeaders();
+
+        if (isset($headers['x-forwarded-for'][0]) && !empty($headers['x-forwarded-for'][0])) {
+            return $headers['x-forwarded-for'][0];
+        } elseif (isset($headers['x-real-ip'][0]) && !empty($headers['x-real-ip'][0])) {
+            return $headers['x-real-ip'][0];
+        }
+
+        $serverParams = $request->getServerParams();
+
+        return $serverParams['remote_addr'] ?? '';
     }
 }

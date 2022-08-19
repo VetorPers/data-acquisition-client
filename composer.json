@@ -13,8 +13,7 @@
     },
     "require": {
         "php": ">=8.0",
-        "hidehalo/nanoid-php": "^1.1",
-        "hyperf/contract": "~2.2.0"
+        "hidehalo/nanoid-php": "^1.1"
     },
     "extra": {
         "hyperf": {

@@ -48,10 +48,10 @@ class Client
     public function send(MessageEntity $data)
     {
         $client = new \Swoole\Client(SWOOLE_SOCK_UDP);
-        $client->sendTo($this->ip, $this->port, $data);
-        $data = $client->recv();
-        var_dump($data);
+        $client->sendTo($this->ip, $this->port, json_encode($data));
 
-        return $data;
+        //        $res = @$client->recv();
+
+        return $res ?? true;
     }
 }

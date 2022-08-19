@@ -7,15 +7,11 @@ namespace ReportAgent\Entity;
  */
 class Entity
 {
-    public mixed $metadata;
-
     /**
      * @param mixed $metadata 元数.
      */
     public function __construct(mixed $metadata)
     {
-        $this->metadata = $metadata;
-
         $metaArray = is_array($metadata) ? $metadata : [];
         if (is_string($metadata)) {
             $metaArray = json_decode($metadata, true);
