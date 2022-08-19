@@ -1,0 +1,24 @@
+{
+    "name": "yuanxinhealthy/report_agent",
+    "type": "library",
+    "keywords": [
+        "php",
+        "hyperf"
+    ],
+    "description": "上报客户端",
+    "autoload": {
+        "psr-4": {
+            "ReportAgent\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0",
+        "hidehalo/nanoid-php": "^1.1",
+        "hyperf/contract": "~2.2.0"
+    },
+    "extra": {
+        "hyperf": {
+            "config": "ReportAgent\\ConfigProvider"
+        }
+    }
+}
