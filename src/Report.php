@@ -2,41 +2,78 @@
 
 namespace ReportAgent;
 
-
-use ReportAgent\Entity\BuryConfEntity;
-use ReportAgent\Entity\Entity;
 use ReportAgent\Entity\MessageEntity;
-use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use ReportAgent\Client\Client;
 
+/**
+ * @author xiaowei@yuanxinjituan.com
+ */
 class Report
 {
+    /**
+     * @var mixed|\ReportAgent\Client\Client
+     */
     protected $client;
+    /**
+     * @var mixed|\ReportAgent\MessageFactory
+     */
     protected $messageFactory;
 
+    /**
+     * @param \Psr\Container\ContainerInterface $container
+     *
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->client = $container->get(Client::class);
-        $this->messageFactory = $container->get(Message::class);
+        $this->messageFactory = $container->get(MessageFactory::class);
     }
 
     /**
-     * @param array{bug_tag: string, content: string} $data
+     * 埋点
      *
-     * @return void
+     * @param mixed  $content 内容
+     * @param string $busTag  业务标识
+     * @param array  $options 其他参数
+     *
+     * @return mixed
      * @author xiaowei@yuanxinjituan.com
      */
-    public function buryPoint(array $data)
+    public function buryPoint(mixed $content, string $busTag = '', array $options = [])
     {
-        $message = $this->messageFactory->produce(MessageEntity::MESSAGE_TYPE_BURY, $data);
+        $message = $this->messageFactory->produce(
+            MessageEntity::MESSAGE_TYPE_BURY,
+            array_merge($options, [
+                'bus_tag' => $busTag,
+                'content' => $content,
+            ])
+        );
 
         return $this->client->send($message);
     }
 
-    public function alarm($data)
+    /**
+     * 告警
+     *
+     * @param mixed  $content 内容
+     * @param string $busTag  业务标识
+     * @param array  $options 其他参数
+     *
+     * @return mixed
+     * @author xiaowei@yuanxinjituan.com
+     */
+    public function alarm(mixed $content, string $busTag = '', array $options = [])
     {
-        $message = $this->messageFactory->produce(MessageEntity::MESSAGE_TYPE_ALARM, $data);
+        $message = $this->messageFactory->produce(
+            MessageEntity::MESSAGE_TYPE_ALARM,
+            array_merge($options, [
+                'bus_tag' => $busTag,
+                'content' => $content,
+            ])
+        );
 
         return $this->client->send($message);
     }

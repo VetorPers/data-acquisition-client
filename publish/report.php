@@ -10,13 +10,15 @@ return [
         'port' => '9506', // 上报端口
     ],
 
+    // 埋点相关配置
     'bury_point' => [
-        'url' => '',
-        'index' => '',
-        'interval' => '',
-        'batch_num' => '',
+        'url' => 'shenche', // 上报地址
+        'index' => 'report:hs-service', // 对应的es索引
+        'interval' => 300, // 间隔多少秒上报一次
+        'batch_num' => 50, // 满足多少条上报一次
     ],
 
+    // 告警相关配置
     'alarm' => [
 
     ],

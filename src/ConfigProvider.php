@@ -13,6 +13,10 @@ namespace ReportAgent;
 
 class ConfigProvider
 {
+    /**
+     * @return array
+     * @author xiaowei@yuanxinjituan.com
+     */
     public function __invoke(): array
     {
         return [
