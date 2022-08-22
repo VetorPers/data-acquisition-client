@@ -65,7 +65,8 @@ class Client
             if (strlen($ret) > 0) {
                 break;
             }
-            sleep(1);
+            sleep(2);
+            break;
         }
 
         if (is_string($ret) && $ret == 'success') {
