@@ -68,7 +68,9 @@ class MessageFactory
      */
     public function messageId()
     {
-        return (new \Hidehalo\Nanoid\Client())->generateId(21, \Hidehalo\Nanoid\Client::MODE_DYNAMIC);
+        // 便于区分消息，返回自增id
+        //        return (new \Hidehalo\Nanoid\Client())->generateId(21, \Hidehalo\Nanoid\Client::MODE_DYNAMIC);
+        return time() . mt_rand(9000, 9999);
     }
 
     /**

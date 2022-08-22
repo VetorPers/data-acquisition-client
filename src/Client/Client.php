@@ -69,7 +69,9 @@ class Client
             break;
         }
 
-        if (is_string($ret) && $ret == 'success') {
+        // 解析返回值，失败抛错
+        $ret = empty($ret) ? [] : json_decode($ret, true);
+        if (!empty($ret['result'])) {
             return true;
         }
 
