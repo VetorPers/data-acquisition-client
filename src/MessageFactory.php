@@ -8,6 +8,7 @@ use Hyperf\HttpServer\Contract\RequestInterface;
 use Hyperf\Utils\ApplicationContext;
 use Psr\Container\ContainerInterface;
 use ReportAgent\Entity\MessageEntity;
+use ReportAgent\Exception\InvalidConfigException;
 
 /**
  * 初始化消息体
@@ -20,10 +21,6 @@ class MessageFactory
      * @var mixed
      */
     protected $appId;
-    /**
-     * @var mixed
-     */
-    protected $config;
 
     /**
      * @param \Psr\Container\ContainerInterface $container
@@ -33,9 +30,12 @@ class MessageFactory
      */
     public function __construct(ContainerInterface $container)
     {
-        $config = $container->get(ConfigInterface::class);
-        $this->config = $config->get('report');
-        $this->appId = $this->config['app_id'];
+        try {
+            $config = $container->get(ConfigInterface::class);
+            $this->appId = $config->get('report')['app_id'];
+        } catch (\Exception $exception) {
+            throw new InvalidConfigException('lack app id config');
+        }
     }
 
     /**
@@ -50,7 +50,6 @@ class MessageFactory
     public function produce(string $type, array $options)
     {
         return new MessageEntity(array_merge(
-            $this->config[$type],
             $options,
             [
                 'app_id' => $this->appId,

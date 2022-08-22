@@ -6,6 +6,8 @@ namespace ReportAgent\Client;
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
 use ReportAgent\Entity\MessageEntity;
+use ReportAgent\Exception\InvalidConfigException;
+use ReportAgent\Exception\ReportFailException;
 
 /**
  * 客户端
@@ -15,9 +17,9 @@ use ReportAgent\Entity\MessageEntity;
 class Client
 {
     /**
-     * @var mixed 上报服务端ip
+     * @var mixed 上报服务端域名
      */
-    protected $ip;
+    protected $domain;
     /**
      * @var mixed 上报服务端端口
      */
@@ -31,10 +33,13 @@ class Client
      */
     public function __construct(ContainerInterface $container)
     {
-        $config = $container->get(ConfigInterface::class);
-        $serverConfig = $config->get('report.server');
-        $this->ip = $serverConfig['ip'];
-        $this->port = $serverConfig['port'];
+        try {
+            $config = $container->get(ConfigInterface::class);
+            $this->domain = $config->get('report')['domain'];
+        } catch (\Exception $exception) {
+            throw new InvalidConfigException('lack domain config');
+        }
+        $this->port = 9506;
     }
 
     /**
@@ -42,16 +47,31 @@ class Client
      *
      * @param \ReportAgent\Entity\MessageEntity $data 上报数据
      *
-     * @return mixed
+     * @return bool
      * @author xiaowei@yuanxinjituan.com
      */
     public function send(MessageEntity $data)
     {
         $client = new \Swoole\Client(SWOOLE_SOCK_UDP);
-        $client->sendTo($this->ip, $this->port, json_encode($data));
+        $ips = \Swoole\Coroutine\System::getaddrinfo($this->domain);
+        // 域名解析失败
+        if (!$ips) throw new InvalidConfigException('domain config valid');
+        $ips = (array)$ips;
+        $client->sendTo($ips[0], $this->port, json_encode($data));
 
-        //        $res = @$client->recv();
+        // 等待响应
+        while (true) {
+            $ret = @$client->recv();
+            if (strlen($ret) > 0) {
+                break;
+            }
+            sleep(1);
+        }
 
-        return $res ?? true;
+        if (is_string($ret) && $ret == 'success') {
+            return true;
+        }
+
+        throw new ReportFailException('report fail');
     }
 }

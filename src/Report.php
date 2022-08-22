@@ -42,7 +42,7 @@ class Report
      * @return mixed
      * @author xiaowei@yuanxinjituan.com
      */
-    public function buryPoint(mixed $content, string $busTag = '', array $options = [])
+    public function buryPoint(mixed $content, string $busTag, array $options = [])
     {
         $message = $this->messageFactory->produce(
             MessageEntity::MESSAGE_TYPE_BURY,
@@ -65,7 +65,7 @@ class Report
      * @return mixed
      * @author xiaowei@yuanxinjituan.com
      */
-    public function alarm(mixed $content, string $busTag = '', array $options = [])
+    public function alarm(mixed $content, string $busTag, array $options = [])
     {
         $message = $this->messageFactory->produce(
             MessageEntity::MESSAGE_TYPE_ALARM,
