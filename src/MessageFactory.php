@@ -11,7 +11,7 @@ use ReportAgent\Entity\MessageEntity;
 use ReportAgent\Exception\InvalidConfigException;
 
 /**
- * 初始化消息体
+ * 初始化消息体.
  *
  * @author xiaowei@yuanxinjituan.com
  */
@@ -39,7 +39,7 @@ class MessageFactory
     }
 
     /**
-     * 生成消息体
+     * 生成消息体.
      *
      * @param string $type    上报类型
      * @param array  $options 上报参数
@@ -56,12 +56,12 @@ class MessageFactory
                 'message_type' => $type,
                 'message_id' => $this->messageId(),
                 'client_ip' => $this->clientIp(),
-                'created_at' => date('Y-m-d H:i:s', time()),
+                'time' => date('Y-m-d H:i:s', time()),
             ]));
     }
 
     /**
-     * 获取消息ID
+     * 获取消息ID.
      *
      * @return string
      * @author xiaowei@yuanxinjituan.com
@@ -74,7 +74,7 @@ class MessageFactory
     }
 
     /**
-     * 获取客户端IP
+     * 获取客户端IP.
      *
      * @return mixed|string
      * @author xiaowei@yuanxinjituan.com

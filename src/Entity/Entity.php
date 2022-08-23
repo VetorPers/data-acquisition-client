@@ -3,7 +3,7 @@
 namespace ReportAgent\Entity;
 
 /**
- * 实体基类
+ * 实体基类.
  */
 class Entity
 {
@@ -34,7 +34,8 @@ class Entity
     }
 
     /**
-     * 转json
+     * 转json.
+     *
      * @return string
      * @author xionglin
      */
@@ -44,6 +45,7 @@ class Entity
         unset($array['metadata']);
 
         $string = json_encode($array);
+
         return is_string($string) ? $string : '';
     }
 

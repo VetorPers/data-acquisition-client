@@ -3,7 +3,7 @@
 namespace ReportAgent\Entity;
 
 /**
- * 消息实体
+ * 消息实体.
  */
 class MessageEntity extends Entity
 {
@@ -28,30 +28,15 @@ class MessageEntity extends Entity
     // 客户端ip
     public string $client_ip = '';
 
-    // 创建时间
-    public string $created_at = '';
+    // 发送时间
+    public string $time = '';
 
     // 消息ID
     public string $message_id = '';
 
-    /**
-     * @param string $clientIp 客户端ip.
-     * @return MessageEntity
-     */
-    public function setClientIp(string $clientIp): self
-    {
-        $this->client_ip = $clientIp;
-        return $this;
-    }
+    // 版本
+    public string $version = '1.0.2';
 
-    /**
-     * @param string $createdAt 创建时间.
-     * @return MessageEntity
-     */
-    public function setCreatedAt(string $createdAt): self
-    {
-        $this->created_at = $createdAt;
-
-        return $this;
-    }
+    // 其他参数
+    public array $options = [];
 }

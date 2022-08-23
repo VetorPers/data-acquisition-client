@@ -10,18 +10,18 @@ use ReportAgent\Exception\InvalidConfigException;
 use ReportAgent\Exception\ReportFailException;
 
 /**
- * 客户端
+ * 客户端.
  *
  * @author xiaowei@yuanxinjituan.com
  */
 class Client
 {
     /**
-     * @var mixed 上报服务端域名
+     * @var mixed 上报服务端域名.
      */
     protected $domain;
     /**
-     * @var mixed 上报服务端端口
+     * @var mixed 上报服务端端口.
      */
     protected $port;
 
@@ -43,9 +43,9 @@ class Client
     }
 
     /**
-     * 上报
+     * 上报.
      *
-     * @param \ReportAgent\Entity\MessageEntity $data 上报数据
+     * @param \ReportAgent\Entity\MessageEntity $data 上报数据.
      *
      * @return bool
      * @author xiaowei@yuanxinjituan.com
@@ -75,6 +75,6 @@ class Client
             return true;
         }
 
-        throw new ReportFailException('report fail');
+        throw new ReportFailException($ret['msg'] ?? 'report fail');
     }
 }
