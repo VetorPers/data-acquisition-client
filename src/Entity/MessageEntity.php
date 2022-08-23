@@ -35,7 +35,7 @@ class MessageEntity extends Entity
     public string $message_id = '';
 
     // 版本
-    public string $version = '1.0.3';
+    public string $version = '1.0.4';
 
     // 其他参数
     public array $options = [];
