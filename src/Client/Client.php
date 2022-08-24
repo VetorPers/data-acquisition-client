@@ -72,7 +72,7 @@ class Client
 
         // 调试模式，获取响应
         if ($this->debug) {
-            $this->logger->debug('debug request data: ' . json_encode($data));
+            $this->logger->debug('debug domain is ' . $this->domain . ', request data: ' . json_encode($data));
 
             return $this->recv($client);
         }
