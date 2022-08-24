@@ -1,6 +1,6 @@
 <?php
 
-namespace ReportAgent;
+namespace YuanxinHealthy\DataAcquisitionClient;
 
 class Auth
 {

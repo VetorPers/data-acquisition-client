@@ -1,6 +1,6 @@
 <?php
 
-namespace ReportAgent\Entity;
+namespace YuanxinHealthy\DataAcquisitionClient\Entity;
 
 /**
  * 消息实体.
@@ -14,7 +14,7 @@ class MessageEntity extends Entity
     const MESSAGE_TYPE_BURY = 'bury';
 
     // 版本
-    const VERSION = '1.0.5';
+    const VERSION = '1.0.6';
 
     // 应用id
     public string $app_id = '';
@@ -27,9 +27,6 @@ class MessageEntity extends Entity
 
     // 内容
     public array $content = [];
-
-    // 客户端ip
-    public string $client_ip = '';
 
     // 发送时间
     public string $time = '';

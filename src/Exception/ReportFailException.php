@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ReportAgent\Exception;
+namespace YuanxinHealthy\DataAcquisitionClient\Exception;
 
 /**
  * 上报失败.

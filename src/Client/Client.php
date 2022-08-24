@@ -1,13 +1,13 @@
 <?php
 
-namespace ReportAgent\Client;
+namespace YuanxinHealthy\DataAcquisitionClient\Client;
 
 
 use Hyperf\Contract\ConfigInterface;
 use Psr\Container\ContainerInterface;
-use ReportAgent\Entity\MessageEntity;
-use ReportAgent\Exception\InvalidConfigException;
-use ReportAgent\Exception\ReportFailException;
+use YuanxinHealthy\DataAcquisitionClient\Entity\MessageEntity;
+use YuanxinHealthy\DataAcquisitionClient\Exception\InvalidConfigException;
+use YuanxinHealthy\DataAcquisitionClient\Exception\ReportFailException;
 
 /**
  * 客户端.
@@ -50,7 +50,7 @@ class Client
     /**
      * 上报.
      *
-     * @param \ReportAgent\Entity\MessageEntity $data 上报数据.
+     * @param MessageEntity $data 上报数据.
      *
      * @return bool
      * @author xiaowei@yuanxinjituan.com
@@ -103,11 +103,11 @@ class Client
                 }
             }
 
-            \Co::sleep(1);
+            sleep(1);
         }
 
-        $data = json_decode($data, true);
-        if ($data['result']) {
+        $data = empty($data) ? [] : json_decode($data, true);
+        if (isset($data['result']) && $data['result']) {
             return $data;
         }
         throw new ReportFailException($data['msg'] ?? 'report fail');

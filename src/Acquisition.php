@@ -1,10 +1,10 @@
 <?php
 
-namespace ReportAgent;
+namespace YuanxinHealthy\DataAcquisitionClient;
 
-use ReportAgent\Entity\MessageEntity;
+use YuanxinHealthy\DataAcquisitionClient\Entity\MessageEntity;
 use Psr\Container\ContainerInterface;
-use ReportAgent\Client\Client;
+use YuanxinHealthy\DataAcquisitionClient\Client\Client;
 
 /**
  * 上报类.
@@ -16,13 +16,13 @@ class Acquisition
     /**
      * 连接端.
      *
-     * @var mixed|\ReportAgent\Client\Client
+     * @var Client
      */
     protected $client;
     /**
      * 消息工厂.
      *
-     * @var mixed|\ReportAgent\MessageFactory
+     * @var MessageFactory
      */
     protected $messageFactory;
 

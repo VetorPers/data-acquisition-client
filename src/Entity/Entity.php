@@ -1,6 +1,6 @@
 <?php
 
-namespace ReportAgent\Entity;
+namespace YuanxinHealthy\DataAcquisitionClient\Entity;
 
 /**
  * 实体基类.
