@@ -14,7 +14,7 @@ class MessageEntity extends Entity
     const MESSAGE_TYPE_BURY = 'bury';
 
     // 版本
-    const VERSION = '1.0.8';
+    const VERSION = '1.1.0';
 
     // 应用id
     public string $app_id = '';

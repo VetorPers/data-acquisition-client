@@ -47,9 +47,11 @@ class Client
     /**
      * 上报.
      *
-     * @param MessageEntity $data 上报数据.
+     * @param \YuanxinHealthy\DataAcquisitionClient\Entity\MessageEntity $data 上报数据.
      *
-     * @return bool
+     * @return array|bool|mixed
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      * @author xiaowei@yuanxinjituan.com
      */
     public function send(MessageEntity $data)
@@ -64,8 +66,10 @@ class Client
 
         // 调试模式，获取响应
         if ($this->debug) {
-            $this->recv($client);
+            return $this->recv($client);
         }
+
+        return true;
     }
 
     /**
