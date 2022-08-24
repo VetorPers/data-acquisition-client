@@ -18,6 +18,10 @@ use YuanxinHealthy\DataAcquisitionClient\Exception\InvalidConfigException;
 class MessageFactory
 {
     /**
+     * @var
+     */
+    protected $container;
+    /**
      * @var mixed
      */
     protected $appId;
@@ -34,17 +38,7 @@ class MessageFactory
      */
     public function __construct(ContainerInterface $container)
     {
-        try {
-            $config = $container->get(ConfigInterface::class);
-            $this->appId = $config->get('acquisition')['app_id'];
-            $this->secret = $config->get('acquisition')['secret'];
-        } catch (\Exception $exception) {
-            throw new InvalidConfigException('lack app id or secret config');
-        }
-
-        if (empty($this->appId) || empty($this->secret)) {
-            throw new InvalidConfigException('app id or secret config is empty');
-        }
+        $this->container = $container;
     }
 
     /**
@@ -58,6 +52,8 @@ class MessageFactory
      */
     public function produce(string $type, array $options)
     {
+        $this->initConfig();
+
         $time = time();
         $messageId = $this->messageId($time);
         $time = date('Y-m-d H:i:s', $time);
@@ -94,5 +90,28 @@ class MessageFactory
         return mb_substr($this->appId, -5)
             . date('YmdHis', $time ?? time())
             . mt_rand(9000, 9999);
+    }
+
+    /**
+     * 初始化配置.
+     *
+     * @return void
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @author xiaowei@yuanxinjituan.com
+     */
+    public function initConfig()
+    {
+        try {
+            $config = $this->container->get(ConfigInterface::class);
+            $this->appId = $config->get('acquisition')['app_id'];
+            $this->secret = $config->get('acquisition')['secret'];
+        } catch (\Exception $exception) {
+            throw new InvalidConfigException('lack app id or secret config');
+        }
+
+        if (empty($this->appId) || empty($this->secret)) {
+            throw new InvalidConfigException('app id or secret config is empty');
+        }
     }
 }

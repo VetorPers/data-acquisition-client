@@ -17,6 +17,10 @@ use YuanxinHealthy\DataAcquisitionClient\Exception\ReportFailException;
 class Client
 {
     /**
+     * @var
+     */
+    protected $container;
+    /**
      * @var mixed 上报服务端域名.
      */
     protected $domain;
@@ -37,14 +41,7 @@ class Client
      */
     public function __construct(ContainerInterface $container)
     {
-        try {
-            $config = $container->get(ConfigInterface::class);
-            $this->domain = $config->get('acquisition')['domain'];
-            $this->debug = $config->get('acquisition')['debug'] ?? false;
-        } catch (\Exception $exception) {
-            throw new InvalidConfigException('lack domain config');
-        }
-        $this->port = 9506;
+        $this->container = $container;
     }
 
     /**
@@ -57,6 +54,8 @@ class Client
      */
     public function send(MessageEntity $data)
     {
+        $this->initConfig();
+
         $client = new \Swoole\Client(SWOOLE_SOCK_UDP);
         if (!$client->connect($this->domain, $this->port, 0.5)) {
             throw new InvalidConfigException('connect fail');
@@ -112,5 +111,25 @@ class Client
             return $data;
         }
         throw new ReportFailException($data['msg'] ?? 'report fail');
+    }
+
+    /**
+     * 初始化配置.
+     *
+     * @return void
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @author xiaowei@yuanxinjituan.com
+     */
+    public function initConfig()
+    {
+        try {
+            $config = $this->container->get(ConfigInterface::class);
+            $this->domain = $config->get('acquisition')['domain'];
+            $this->debug = $config->get('acquisition')['debug'] ?? false;
+        } catch (\Exception $exception) {
+            throw new InvalidConfigException('lack domain config');
+        }
+        $this->port = 9506;
     }
 }
