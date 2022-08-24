@@ -40,7 +40,7 @@ class Client
         try {
             $config = $container->get(ConfigInterface::class);
             $this->domain = $config->get('acquisition')['domain'];
-            $this->debug = $config->get('acquisition')['debug'];
+            $this->debug = $config->get('acquisition')['debug'] ?? false;
         } catch (\Exception $exception) {
             throw new InvalidConfigException('lack domain config');
         }
@@ -106,6 +106,7 @@ class Client
             sleep(1);
         }
 
+        // 正确返回数据，失败抛错
         $data = empty($data) ? [] : json_decode($data, true);
         if (isset($data['result']) && $data['result']) {
             return $data;

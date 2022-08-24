@@ -39,7 +39,11 @@ class MessageFactory
             $this->appId = $config->get('acquisition')['app_id'];
             $this->secret = $config->get('acquisition')['secret'];
         } catch (\Exception $exception) {
-            throw new InvalidConfigException('lack app id config');
+            throw new InvalidConfigException('lack app id or secret config');
+        }
+
+        if (empty($this->appId) || empty($this->secret)) {
+            throw new InvalidConfigException('app id or secret config is empty');
         }
     }
 
@@ -54,8 +58,9 @@ class MessageFactory
      */
     public function produce(string $type, array $options)
     {
-        $time = date('Y-m-d H:i:s', time());
-        $messageId = $this->messageId();
+        $time = time();
+        $messageId = $this->messageId($time);
+        $time = date('Y-m-d H:i:s', $time);
         // 获取签名
         $sign = Auth::sign($this->secret, [
             'app_id' => $this->appId,
@@ -78,13 +83,16 @@ class MessageFactory
     /**
      * 获取消息ID.
      *
+     * @param int|null $time 当前时间戳.
+     *
      * @return string
      * @author xiaowei@yuanxinjituan.com
      */
-    public function messageId()
+    public function messageId(int $time = null)
     {
         // 便于区分消息，返回自增id
-        //        return (new \Hidehalo\Nanoid\Client())->generateId(21, \Hidehalo\Nanoid\Client::MODE_DYNAMIC);
-        return time() . mt_rand(9000, 9999);
+        return mb_substr($this->appId, -5)
+            . date('YmdHis', $time ?? time())
+            . mt_rand(9000, 9999);
     }
 }
