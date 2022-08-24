@@ -24,6 +24,10 @@ class Client
      * @var mixed 上报服务端端口.
      */
     protected $port;
+    /**
+     * @var mixed 是否调试模式
+     */
+    protected $debug;
 
     /**
      * @param \Psr\Container\ContainerInterface $container
@@ -35,7 +39,8 @@ class Client
     {
         try {
             $config = $container->get(ConfigInterface::class);
-            $this->domain = $config->get('report')['domain'];
+            $this->domain = $config->get('acquisition')['domain'];
+            $this->debug = $config->get('acquisition')['debug'];
         } catch (\Exception $exception) {
             throw new InvalidConfigException('lack domain config');
         }
@@ -53,28 +58,58 @@ class Client
     public function send(MessageEntity $data)
     {
         $client = new \Swoole\Client(SWOOLE_SOCK_UDP);
-        $ips = \Swoole\Coroutine\System::getaddrinfo($this->domain);
-        // 域名解析失败
-        if (!$ips) throw new InvalidConfigException('domain config valid');
-        $ips = (array)$ips;
-        $client->sendTo($ips[0], $this->port, json_encode($data));
+        if (!$client->connect($this->domain, $this->port, 0.5)) {
+            throw new InvalidConfigException('connect fail');
+        }
+        $client->send(json_encode($data));
 
-        // 等待响应
+        // 调试模式，获取响应
+        if ($this->debug) {
+            $this->recv($client);
+        }
+    }
+
+    /**
+     * 接受数据
+     *
+     * @param \Swoole\Client $client 客户端
+     *
+     * @return mixed
+     * @author xiaowei@yuanxinjituan.com
+     */
+    public function recv(\Swoole\Client $client)
+    {
         while (true) {
-            $ret = @$client->recv();
-            if (strlen($ret) > 0) {
+            $data = $client->recv();
+            if (strlen($data) > 0) {
                 break;
+            } else {
+                if ($data === '') {
+                    // 全等于空 直接关闭连接
+                    $client->close();
+                    break;
+                } else {
+                    if ($data === false) {
+                        // 可以自行根据业务逻辑和错误码进行处理，例如：
+                        // 如果超时时则不关闭连接，其他情况直接关闭连接
+                        if ($client->errCode !== SOCKET_ETIMEDOUT) {
+                            $client->close();
+                            break;
+                        }
+                    } else {
+                        $client->close();
+                        break;
+                    }
+                }
             }
-            sleep(2);
-            break;
+
+            \Co::sleep(1);
         }
 
-        // 解析返回值，失败抛错
-        $ret = empty($ret) ? [] : json_decode($ret, true);
-        if (!empty($ret['result'])) {
-            return true;
+        $data = json_decode($data, true);
+        if ($data['result']) {
+            return $data;
         }
-
-        throw new ReportFailException($ret['msg'] ?? 'report fail');
+        throw new ReportFailException($data['msg'] ?? 'report fail');
     }
 }

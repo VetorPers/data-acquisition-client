@@ -11,7 +11,7 @@ use ReportAgent\Client\Client;
  *
  * @author xiaowei@yuanxinjituan.com
  */
-class Report
+class Acquisition
 {
     /**
      * 连接端.

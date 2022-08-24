@@ -13,6 +13,9 @@ class MessageEntity extends Entity
     // 埋点
     const MESSAGE_TYPE_BURY = 'bury';
 
+    // 版本
+    const VERSION = '1.0.5';
+
     // 应用id
     public string $app_id = '';
 
@@ -35,7 +38,10 @@ class MessageEntity extends Entity
     public string $message_id = '';
 
     // 版本
-    public string $version = '1.0.4';
+    public string $version = self::VERSION;
+
+    // 签名
+    public string $sign = '';
 
     // 其他参数
     public array $options = [];

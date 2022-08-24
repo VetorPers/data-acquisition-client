@@ -21,6 +21,10 @@ class MessageFactory
      * @var mixed
      */
     protected $appId;
+    /**
+     * @var mixed
+     */
+    protected $secrect;
 
     /**
      * @param \Psr\Container\ContainerInterface $container
@@ -32,7 +36,8 @@ class MessageFactory
     {
         try {
             $config = $container->get(ConfigInterface::class);
-            $this->appId = $config->get('report')['app_id'];
+            $this->appId = $config->get('acquisition')['app_id'];
+            $this->secrect = $config->get('acquisition')['secrect'];
         } catch (\Exception $exception) {
             throw new InvalidConfigException('lack app id config');
         }
@@ -49,14 +54,25 @@ class MessageFactory
      */
     public function produce(string $type, array $options)
     {
+        $time = date('Y-m-d H:i:s', time());
+        $messageId = $this->messageId();
+        // 获取签名
+        $sign = Auth::sign($this->secrect, [
+            'app_id' => $this->appId,
+            'time' => $time,
+            'version' => MessageEntity::VERSION,
+            'message_id' => $messageId,
+        ]);
+
         return new MessageEntity(array_merge(
             $options,
             [
                 'app_id' => $this->appId,
                 'message_type' => $type,
-                'message_id' => $this->messageId(),
+                'message_id' => $messageId,
                 'client_ip' => $this->clientIp(),
-                'time' => date('Y-m-d H:i:s', time()),
+                'time' => $time,
+                'sign' => $sign,
             ]));
     }
 
