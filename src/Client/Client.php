@@ -4,7 +4,6 @@ namespace YuanxinHealthy\DataAcquisitionClient\Client;
 
 
 use Hyperf\Contract\ConfigInterface;
-use Hyperf\Contract\StdoutLoggerInterface;
 use Psr\Container\ContainerInterface;
 use YuanxinHealthy\DataAcquisitionClient\Entity\MessageEntity;
 use YuanxinHealthy\DataAcquisitionClient\Exception\InvalidConfigException;
@@ -33,10 +32,6 @@ class Client
      * @var mixed 是否调试模式
      */
     protected $debug;
-    /**
-     * @var StdoutLoggerInterface
-     */
-    protected StdoutLoggerInterface $logger;
 
     /**
      * @param \Psr\Container\ContainerInterface $container
@@ -47,7 +42,6 @@ class Client
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
-        $this->logger = $this->container->get(StdoutLoggerInterface::class);
     }
 
     /**
@@ -72,7 +66,7 @@ class Client
 
         // 调试模式，获取响应
         if ($this->debug) {
-            $this->logger->debug('debug domain is ' . $this->domain . ', request data: ' . json_encode($data));
+            var_dump('debug domain is ' . $this->domain . ', request data: ' . json_encode($data));
 
             return $this->recv($client);
         }
@@ -117,7 +111,7 @@ class Client
             sleep(1);
         }
 
-        $this->logger->debug('debug response: ' . json_encode($data));
+        var_dump('debug response: ' . json_encode($data));
         // 正确返回数据，失败抛错
         $data = empty($data) ? [] : json_decode($data, true);
         if (isset($data['result']) && $data['result']) {
